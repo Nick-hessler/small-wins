@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import Link from 'next/link'
 
 const geist = Geist({
   variable: '--font-geist-sans',
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
   themeColor: '#000000',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
@@ -54,6 +55,18 @@ export default function RootLayout({
           overflowY: 'auto',
         }}
       >
+        <header style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '14px 18px', borderBottom: '1px solid rgba(255,255,255,.08)'
+        }}>
+          <Link href="/" style={{ fontWeight: 800, fontSize: 18, color: 'white', textDecoration: 'none' }}>Small Wins</Link>
+          <nav style={{ display: 'flex', gap: 12 }}>
+            <Link href="/waitlist" className="ctaSecondary">Waitlist</Link>
+            <Link href="/plans" className="ctaSecondary">Plans</Link>
+            <Link href="/auth/sign-in" className="ctaSecondary">Sign in</Link>
+            <Link href="/auth/sign-up" className="ctaPrimary">Create account</Link>
+          </nav>
+        </header>
         {children}
       </body>
     </html>
