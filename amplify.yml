@@ -3,19 +3,15 @@ frontend:
   phases:
     preBuild:
       commands:
-        - cd apps/web
-        - npm ci
+        - cd apps/web && npm ci
     build:
       commands:
-        - npm run build
+        - cd apps/web && npm run build
         - echo "Build completed successfully"
   artifacts:
-    baseDirectory: apps/web
+    baseDirectory: apps/web/out
     files:
-      - '.next/**/*'
-      - 'public/**/*'
-      - 'node_modules/**/*'
-      - 'package.json'
+      - '**/*'
   cache:
     paths:
       - node_modules/**/*
