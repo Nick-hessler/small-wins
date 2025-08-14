@@ -33,16 +33,43 @@ export default function SignInPage() {
     }
   }
 
+  const cardStyle: React.CSSProperties = {
+    maxWidth: 460,
+    margin: '64px auto',
+    padding: 22,
+    borderRadius: 16,
+    background: 'rgba(255,255,255,.06)',
+    border: '1px solid rgba(255,255,255,.12)',
+    backdropFilter: 'blur(8px)'
+  };
+  const inputStyle: React.CSSProperties = {
+    padding: 12,
+    borderRadius: 12,
+    border: '1px solid rgba(255,255,255,.18)',
+    background: 'rgba(0,0,0,.2)',
+    color: 'white'
+  };
+  const primaryBtn: React.CSSProperties = {
+    padding: '12px 14px', borderRadius: 12, fontWeight: 800,
+    background: 'linear-gradient(180deg,#7C3AED 0%, #4F46E5 100%)', color: 'white', border: 'none'
+  };
+  const secondaryBtn: React.CSSProperties = {
+    padding: '10px 14px', borderRadius: 12, fontWeight: 700,
+    background: 'rgba(255,255,255,.08)', color: 'rgba(226,232,255,.9)', border: '1px solid rgba(255,255,255,.14)'
+  };
+
   return (
-    <main style={{ maxWidth: 480, margin: "80px auto", padding: 24 }}>
-      <h1 style={{ fontWeight: 800, fontSize: 28, marginBottom: 16 }}>Sign in</h1>
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
-        <input aria-label="Email" type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} required style={{ padding: 12, borderRadius: 10, border: "1px solid #ddd" }} />
-        <input aria-label="Password" type="password" placeholder="••••••••" value={password} onChange={e=>setPassword(e.target.value)} required style={{ padding: 12, borderRadius: 10, border: "1px solid #ddd" }} />
-        {error && <p style={{ color: "#ef4444", fontSize: 14 }}>{error}</p>}
-        <button disabled={loading} className="ctaPrimary" type="submit">{loading ? "Signing in..." : "Sign in"}</button>
-        <button type="button" className="ctaSecondary" onClick={()=>router.push("/auth/sign-up")}>Create an account</button>
-      </form>
+    <main style={{ padding: '0 14px' }}>
+      <section style={cardStyle}>
+        <h1 style={{ fontWeight: 900, fontSize: 28, margin: '4px 0 14px' }}>Sign in</h1>
+        <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
+          <input aria-label="Email" type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} required style={inputStyle} />
+          <input aria-label="Password" type="password" placeholder="••••••••" value={password} onChange={e=>setPassword(e.target.value)} required style={inputStyle} />
+          {error && <p style={{ color: '#FCA5A5', fontSize: 14 }}>{error}</p>}
+          <button disabled={loading} style={primaryBtn} type="submit">{loading ? "Signing in..." : "Sign in"}</button>
+          <button type="button" style={secondaryBtn} onClick={()=>router.push("/auth/sign-up")}>Create an account</button>
+        </form>
+      </section>
     </main>
   );
 }
