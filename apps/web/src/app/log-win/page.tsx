@@ -1,7 +1,20 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { generateClient } from "aws-amplify/api";
 import { configureAmplify } from "@/app/amplify-client";
+
+const CREATE_WIN = /* GraphQL */ `
+  mutation CreateWin($input: CreateWinInput!) {
+    createWin(input: $input) {
+      winId
+      title
+      category
+      points
+      createdAt
+    }
+  }
+`;
 
 export default function LogWinPage() {
   configureAmplify();
@@ -9,34 +22,55 @@ export default function LogWinPage() {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const categories = [
-    "Work & Career",
-    "Health & Fitness", 
-    "Learning & Growth",
-    "Relationships",
-    "Personal Goals",
-    "Creative Projects",
-    "Home & Organization",
-    "Other"
+    "work",
+    "health",
+    "learning",
+    "relationships",
+    "personal",
+    "creative",
+    "home",
+    "other"
   ];
+
+  function mapToSchemaCategory(local: string): string {
+    // Map simple local names into schema Category values
+    switch (local) {
+      case "work": return "work";
+      case "health": return "cozy"; // using cozy as wellness vibe
+      case "learning": return "random";
+      case "relationships": return "social";
+      case "creative": return "petty";
+      case "home": return "outdoors"; // closest available
+      case "personal": return "random";
+      default: return "random";
+    }
+  }
+
+  function estimatePoints(text: string): number {
+    const lengthBonus = Math.min(20, Math.floor(text.trim().length / 20));
+    return 5 + lengthBonus; // simple heuristic
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!description.trim() || !category) return;
-    
     setLoading(true);
+    setError(null);
     try {
-      // TODO: Call GraphQL mutation to create win
-      console.log("Logging win:", { description, category });
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Redirect to dashboard with success
-      router.push("/me?win=logged");
-    } catch (err) {
-      console.error("Failed to log win:", err);
+      const client = generateClient();
+      const points = estimatePoints(description);
+      const schemaCategory = mapToSchemaCategory(category);
+      await client.graphql({
+        query: CREATE_WIN,
+        variables: { input: { title: description.trim(), note: null, category: schemaCategory, points } }
+      });
+      router.push("/feed");
+    } catch (err: unknown) {
+      const msg = typeof err === 'object' && err && 'message' in err ? String((err as {message:string}).message) : 'Failed to log win';
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -139,6 +173,8 @@ export default function LogWinPage() {
               ))}
             </select>
           </div>
+
+          {error && <p style={{ color: '#FCA5A5', fontSize: 14 }}>{error}</p>}
 
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <button 
