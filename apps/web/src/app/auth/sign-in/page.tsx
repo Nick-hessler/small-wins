@@ -19,11 +19,11 @@ export default function SignInPage() {
     try {
       const res = await signIn({ username: email, password });
       if (res.isSignedIn) {
-        router.push("/");
+        router.push("/me");
       } else if (res.nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED") {
         router.push("/auth/confirm");
       } else {
-        router.push("/");
+        router.push("/me");
       }
     } catch (err: unknown) {
       const msg = typeof err === 'object' && err && 'message' in err ? String((err as {message:string}).message) : 'Failed to sign in';
