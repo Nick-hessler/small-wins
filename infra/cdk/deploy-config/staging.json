@@ -1,0 +1,13 @@
+{
+  "env": "staging",
+  "region": "us-east-1",
+  "account": "your-staging-account-id",
+  "domain": "staging.smallwins.com",
+  "certificateArn": "arn:aws:acm:us-east-1:your-staging-account-id:certificate/your-cert-id",
+  "hostedZoneId": "your-hosted-zone-id",
+  "tags": {
+    "Environment": "staging",
+    "Project": "SmallWins",
+    "ManagedBy": "CDK"
+  }
+}

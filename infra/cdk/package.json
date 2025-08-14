@@ -1,0 +1,40 @@
+{
+  "name": "@small-wins/infra",
+  "version": "1.0.0",
+  "description": "AWS CDK infrastructure for Small Wins",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "cdk": "cdk",
+    "synth": "cdk synth",
+    "deploy:dev": "cdk deploy --profile dev --require-approval never",
+    "deploy:staging": "cdk deploy --profile staging --require-approval never",
+    "deploy:prod": "cdk deploy --profile prod --require-approval never",
+    "destroy:dev": "cdk destroy --profile dev",
+    "destroy:staging": "cdk destroy --profile staging",
+    "destroy:prod": "cdk destroy --profile prod",
+    "rollback:prod": "cdk rollback --profile prod",
+    "diff:dev": "cdk diff --profile dev",
+    "diff:staging": "cdk diff --profile staging",
+    "diff:prod": "cdk diff --profile prod"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.10",
+    "aws-cdk": "^2.102.4",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.864.0",
+    "@aws-sdk/client-s3": "^3.864.0",
+    "@aws-sdk/lib-dynamodb": "^3.864.0",
+    "@aws-sdk/s3-request-presigner": "^3.864.0",
+    "aws-cdk-lib": "^2.102.4",
+    "constructs": "^10.3.0",
+    "ulid": "^3.0.1"
+  }
+}

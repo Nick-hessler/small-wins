@@ -1,0 +1,14 @@
+{
+  "name": "@small-wins/services",
+  "version": "1.0.0",
+  "description": "Backend services for Small Wins",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Services built'",
+    "test": "echo 'No tests yet'"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}

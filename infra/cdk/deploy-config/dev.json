@@ -1,0 +1,11 @@
+{
+  "env": "dev",
+  "region": "us-east-1",
+  "account": "055370383486",
+
+  "tags": {
+    "Environment": "dev",
+    "Project": "SmallWins",
+    "ManagedBy": "CDK"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "name": "small-wins",
+  "version": "1.0.0",
+  "description": "Small Wins - The game of your day",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "infra/cdk",
+    "services/functions"
+  ],
+  "scripts": {
+    "dev": "cd apps/web && npm run dev",
+    "build": "npm run build:web && npm run build:infra",
+    "build:web": "cd apps/web && npm run build",
+    "build:infra": "cd infra/cdk && npm run build",
+    "test": "npm run test:web && npm run test:infra",
+    "test:web": "cd apps/web && npm run test",
+    "test:infra": "cd infra/cdk && npm run test",
+    "lint": "npm run lint:web && npm run lint:infra",
+    "lint:web": "cd apps/web && npm run lint",
+    "lint:infra": "cd infra/cdk && npm run lint",
+    "typecheck": "npm run typecheck:web && npm run typecheck:infra",
+    "typecheck:web": "cd apps/web && npm run typecheck",
+    "typecheck:infra": "cd infra/cdk && npm run typecheck",
+    "deploy:dev": "cd infra/cdk && npm run deploy:dev",
+    "deploy:staging": "cd infra/cdk && npm run deploy:staging",
+    "deploy:prod": "cd infra/cdk && npm run deploy:prod",
+    "clean": "npm run clean:web && npm run clean:infra",
+    "clean:web": "cd apps/web && rm -rf .next out",
+    "clean:infra": "cd infra/cdk && rm -rf cdk.out dist"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "picocolors": "^1.1.1",
+    "source-map-js": "^1.2.1"
+  }
+}

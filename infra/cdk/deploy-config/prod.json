@@ -1,0 +1,13 @@
+{
+  "env": "prod",
+  "region": "us-east-1",
+  "account": "your-prod-account-id",
+  "domain": "smallwins.com",
+  "certificateArn": "arn:aws:acm:us-east-1:your-prod-account-id:certificate/your-cert-id",
+  "hostedZoneId": "your-hosted-zone-id",
+  "tags": {
+    "Environment": "prod",
+    "Project": "SmallWins",
+    "ManagedBy": "CDK"
+  }
+}

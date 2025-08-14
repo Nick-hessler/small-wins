@@ -1,0 +1,173 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  AWS_REGION: us-east-1
+  NODE_VERSION: '18'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run linting
+      run: npm run lint
+
+    - name: Run type checking
+      run: npm run typecheck
+
+    - name: Run tests
+      run: npm run test
+
+    - name: Build applications
+      run: npm run build
+
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run security scan
+      uses: github/codeql-action/init@v3
+      with:
+        languages: javascript, typescript
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+
+  deploy-dev:
+    runs-on: ubuntu-latest
+    needs: [test, security-scan]
+    if: github.ref == 'refs/heads/develop'
+    environment: development
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Install AWS CDK
+      run: npm install -g aws-cdk
+
+    - name: Deploy to development
+      run: |
+        cd infra/cdk
+        npm run deploy:dev
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [test, security-scan]
+    if: github.ref == 'refs/heads/main'
+    environment: staging
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_STAGING }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGING }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Install AWS CDK
+      run: npm install -g aws-cdk
+
+    - name: Deploy to staging
+      run: |
+        cd infra/cdk
+        npm run deploy:staging
+
+  deploy-prod:
+    runs-on: ubuntu-latest
+    needs: [test, security-scan]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Install AWS CDK
+      run: npm install -g aws-cdk
+
+    - name: Deploy to production
+      run: |
+        cd infra/cdk
+        npm run deploy:prod
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [deploy-dev, deploy-staging, deploy-prod]
+    if: always()
+    
+    steps:
+    - name: Notify deployment status
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}

@@ -1,0 +1,97 @@
+scalar AWSDate
+scalar AWSDateTime
+scalar AWSURL
+scalar AWSJSON
+
+type User {
+  userId: ID!
+  handle: String!
+  displayName: String!
+  avatarUrl: AWSURL
+  createdAt: AWSDateTime!
+}
+
+enum Category {
+  petty
+  cozy
+  social
+  outdoors
+  work
+  random
+}
+
+type Win {
+  winId: ID!
+  userId: ID!
+  title: String!
+  note: String
+  category: Category!
+  points: Int!
+  photoUrl: AWSURL
+  createdAt: AWSDateTime!
+  reactions: Reactions
+}
+
+type Reactions {
+  clap: Int
+  laugh: Int
+  fire: Int
+  mindblown: Int
+}
+
+type LeaderboardRow {
+  userId: ID!
+  displayName: String!
+  handle: String!
+  score: Int!
+  winsCount: Int!
+}
+
+type Badge {
+  id: ID!
+  name: String!
+  description: String!
+  unlocked: Boolean!
+  unlockedAt: AWSDateTime
+  icon: String!
+}
+
+type FeedPage {
+  items: [Win!]!
+  nextToken: String
+}
+
+input CreateWinInput {
+  title: String!
+  note: String
+  category: Category!
+  points: Int!
+  photoKey: String
+}
+
+type PresignedPost {
+  url: AWSURL!
+  fields: AWSJSON!
+}
+
+type Query {
+  me: User!
+  winsToday(userId: ID!): [Win!]!
+  feedToday(limit: Int, nextToken: String, userIds: [ID!]): FeedPage!
+  weeklyLeaderboard(weekStart: AWSDate!): [LeaderboardRow!]!
+  badges(userId: ID!): [Badge!]!
+}
+
+type Mutation {
+  createWin(input: CreateWinInput!): Win!
+  deleteWin(winId: ID!): Boolean!
+  signPhotoUpload(contentType: String!): PresignedPost!
+  addReaction(winId: ID!, emoji: String!): Win!
+}
+
+type Subscription {
+  onWinCreated: Win
+    @aws_subscribe(mutations: ["createWin"])
+  onReactionAdded: Win
+    @aws_subscribe(mutations: ["addReaction"])
+}
