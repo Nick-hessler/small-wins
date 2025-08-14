@@ -8,10 +8,14 @@ frontend:
     build:
       commands:
         - npm run build
+        - echo "Build completed successfully"
   artifacts:
-    baseDirectory: apps/web/.next
+    baseDirectory: apps/web
     files:
-      - '**/*'
+      - '.next/**/*'
+      - 'public/**/*'
+      - 'node_modules/**/*'
+      - 'package.json'
   cache:
     paths:
       - node_modules/**/*
