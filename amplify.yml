@@ -3,10 +3,11 @@ frontend:
   phases:
     preBuild:
       commands:
+        - cd apps/web
         - npm ci
     build:
       commands:
-        - npm run build:amplify
+        - npm run build
   artifacts:
     baseDirectory: apps/web/.next
     files:
